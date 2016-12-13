@@ -1,0 +1,371 @@
+[
+  {
+    "id": "f6c08d8b.4ae08",
+    "type": "inject",
+    "z": "3f85477a.cc7968",
+    "name": "",
+    "topic": "",
+    "payload": "1",
+    "payloadType": "num",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "x": 109,
+    "y": 142,
+    "wires": [
+      [
+        "fc41fa49.98ad18"
+      ]
+    ]
+  },
+  {
+    "id": "fc41fa49.98ad18",
+    "type": "http request",
+    "z": "3f85477a.cc7968",
+    "name": "RequestJenkinsStatus",
+    "method": "GET",
+    "ret": "txt",
+    "url": "192.168.2.120:8080/job/ampelJob/lastBuild/api/json",
+    "tls": "",
+    "x": 320,
+    "y": 139,
+    "wires": [
+      [
+        "53ebfa84.b6e044"
+      ]
+    ]
+  },
+  {
+    "id": "53ebfa84.b6e044",
+    "type": "json",
+    "z": "3f85477a.cc7968",
+    "name": "",
+    "x": 524,
+    "y": 130,
+    "wires": [
+      [
+        "ec4a67d6.19a238"
+      ]
+    ]
+  },
+  {
+    "id": "ec4a67d6.19a238",
+    "type": "function",
+    "z": "3f85477a.cc7968",
+    "name": "parse",
+    "func": "msg.payload = msg.payload.result\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 106,
+    "y": 270,
+    "wires": [
+      [
+        "794eaaff.496654",
+        "3e74f616.735c2a"
+      ]
+    ]
+  },
+  {
+    "id": "3e74f616.735c2a",
+    "type": "switch",
+    "z": "3f85477a.cc7968",
+    "name": "",
+    "property": "payload",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "eq",
+        "v": "SUCCESS",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "UNSTABLE",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "FAILURE",
+        "vt": "str"
+      }
+    ],
+    "checkall": "false",
+    "outputs": 3,
+    "x": 297,
+    "y": 311,
+    "wires": [
+      [
+        "f0dc84ff.7169c8"
+      ],
+      [
+        "cfd0dbb8.9b1b68"
+      ],
+      [
+        "50e8f15d.8b11c"
+      ]
+    ]
+  },
+  {
+    "id": "f0dc84ff.7169c8",
+    "type": "change",
+    "z": "3f85477a.cc7968",
+    "name": "GreenOn",
+    "rules": [
+      {
+        "t": "set",
+        "p": "payload",
+        "pt": "msg",
+        "to": "0",
+        "tot": "str"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 486,
+    "y": 297,
+    "wires": [
+      [
+        "940e67fc.225768"
+      ]
+    ]
+  },
+  {
+    "id": "940e67fc.225768",
+    "type": "rpi-gpio out",
+    "z": "3f85477a.cc7968",
+    "name": "",
+    "pin": "11",
+    "set": "",
+    "level": "0",
+    "out": "out",
+    "x": 838,
+    "y": 205,
+    "wires": []
+  },
+  {
+    "id": "877e3929.3ec038",
+    "type": "rpi-gpio out",
+    "z": "3f85477a.cc7968",
+    "name": "",
+    "pin": "13",
+    "set": "",
+    "level": "0",
+    "out": "out",
+    "x": 832,
+    "y": 259,
+    "wires": []
+  },
+  {
+    "id": "812ed721.e23ad8",
+    "type": "rpi-gpio out",
+    "z": "3f85477a.cc7968",
+    "name": "",
+    "pin": "15",
+    "set": "",
+    "level": "0",
+    "out": "out",
+    "x": 832,
+    "y": 319,
+    "wires": []
+  },
+  {
+    "id": "794eaaff.496654",
+    "type": "change",
+    "z": "3f85477a.cc7968",
+    "name": "All off",
+    "rules": [
+      {
+        "t": "set",
+        "p": "payload",
+        "pt": "msg",
+        "to": "1",
+        "tot": "num"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 299,
+    "y": 239,
+    "wires": [
+      [
+        "940e67fc.225768",
+        "877e3929.3ec038",
+        "812ed721.e23ad8"
+      ]
+    ]
+  },
+  {
+    "id": "cfd0dbb8.9b1b68",
+    "type": "change",
+    "z": "3f85477a.cc7968",
+    "name": "YellowOn",
+    "rules": [
+      {
+        "t": "set",
+        "p": "payload",
+        "pt": "msg",
+        "to": "0",
+        "tot": "str"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 487,
+    "y": 333,
+    "wires": [
+      [
+        "877e3929.3ec038"
+      ]
+    ]
+  },
+  {
+    "id": "50e8f15d.8b11c",
+    "type": "change",
+    "z": "3f85477a.cc7968",
+    "name": "RedOn",
+    "rules": [
+      {
+        "t": "set",
+        "p": "payload",
+        "pt": "msg",
+        "to": "0",
+        "tot": "str"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 487,
+    "y": 369,
+    "wires": [
+      [
+        "812ed721.e23ad8"
+      ]
+    ]
+  },
+  {
+    "id": "8583d006.cbb1b",
+    "type": "inject",
+    "z": "3f85477a.cc7968",
+    "name": "Green on manual",
+    "topic": "",
+    "payload": "1",
+    "payloadType": "num",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "x": 516,
+    "y": 434,
+    "wires": [
+      [
+        "940e67fc.225768"
+      ]
+    ]
+  },
+  {
+    "id": "4ebc88a2.dca568",
+    "type": "inject",
+    "z": "3f85477a.cc7968",
+    "name": "Green off manual",
+    "topic": "",
+    "payload": "0",
+    "payloadType": "num",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "x": 517,
+    "y": 469,
+    "wires": [
+      [
+        "940e67fc.225768"
+      ]
+    ]
+  },
+  {
+    "id": "23ee9760.fce658",
+    "type": "inject",
+    "z": "3f85477a.cc7968",
+    "name": "Yellow on manual",
+    "topic": "",
+    "payload": "1",
+    "payloadType": "num",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "x": 515,
+    "y": 505,
+    "wires": [
+      [
+        "877e3929.3ec038"
+      ]
+    ]
+  },
+  {
+    "id": "6273995f.0ede78",
+    "type": "inject",
+    "z": "3f85477a.cc7968",
+    "name": "Red on manual",
+    "topic": "",
+    "payload": "1",
+    "payloadType": "num",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "x": 506,
+    "y": 575,
+    "wires": [
+      [
+        "812ed721.e23ad8"
+      ]
+    ]
+  },
+  {
+    "id": "93267cd7.bd686",
+    "type": "inject",
+    "z": "3f85477a.cc7968",
+    "name": "Yellow off manual",
+    "topic": "",
+    "payload": "0",
+    "payloadType": "num",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "x": 505,
+    "y": 539,
+    "wires": [
+      [
+        "877e3929.3ec038"
+      ]
+    ]
+  },
+  {
+    "id": "eeba2a74.620468",
+    "type": "inject",
+    "z": "3f85477a.cc7968",
+    "name": "Red off manual",
+    "topic": "",
+    "payload": "0",
+    "payloadType": "num",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "x": 503,
+    "y": 610,
+    "wires": [
+      [
+        "812ed721.e23ad8"
+      ]
+    ]
+  }
+]
